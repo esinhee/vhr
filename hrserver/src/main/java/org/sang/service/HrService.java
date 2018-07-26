@@ -11,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,6 +57,10 @@ public class HrService implements UserDetailsService {
         int i = hrMapper.deleteRoleByHrId(hrId);
         return hrMapper.addRolesForHr(hrId, rids);
     }
+    
+    public int updateHrRoles2(Long hrId, Long[] rids) {
+        return hrMapper.addRolesForHr2(hrId, rids);
+    }
 
     public Hr getHrById(Long hrId) {
         return hrMapper.getHrById(hrId);
@@ -68,5 +75,63 @@ public class HrService implements UserDetailsService {
     }
     public List<Hr> getAllHr() {
         return hrMapper.getAllHr(null);
+    }
+    
+    public int newOperator(Hr hr) {
+    	//如果用户名存在，返回错误
+        if (hrMapper.loadUserByUsername(hr.getUsername()) != null) {
+            return -1;
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encode = encoder.encode(hr.getPassword());
+        hr.setPassword(encode);
+        hrMapper.newOperator(hr);
+        return Integer.parseInt(String.valueOf(hr.getId()));
+    }
+
+    public List<Hr> getOperatorList() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat s = new SimpleDateFormat("HH:mm:ss");
+        String rank = "";
+
+        try {
+            rank = sdf.format(new Date());
+            Date dtCur = s.parse(s.format(new Date()));
+            Date dtObj = s.parse("12:30:00");
+            if (dtCur.getTime() > dtObj.getTime()) { //下午班
+                rank = rank + "02";
+            } else {
+                rank = rank + "01";
+            }
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    	return hrMapper.getOperatorList(rank);
+    }
+
+    public int uploadAvator(String userface) {
+        return hrMapper.updateUserFace(Integer.parseInt(String.valueOf(HrUtils.getCurrentHr().getId())),userface);
+    }
+
+    /**
+     * 修改密码
+     * @param oldpass
+     * @param newpass
+     * @return
+     */
+    public int updatePassword(String oldpass, String newpass) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        /*String oldpassword = encoder.encode(oldpass);
+        if (hrMapper.getHrByPassword(HrUtils.getCurrentHr().getUsername(), oldpassword) == null) {
+            return -1;
+        }*/
+
+        String newpassword = encoder.encode(newpass);
+        return hrMapper.updatePassword(Integer.parseInt(String.valueOf(HrUtils.getCurrentHr().getId())), newpassword);
+    }
+
+    public List<Hr> getRyList() {
+        return hrMapper.getRyList();
     }
 }

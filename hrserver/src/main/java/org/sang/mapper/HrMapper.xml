@@ -29,6 +29,9 @@
     <select id="loadUserByUsername" resultMap="lazyLoadRoles">
         select * from hr WHERE username=#{username};
     </select>
+    <select id="getHrByPassword" resultMap="lazyLoadRoles">
+        select * from hr WHERE username=#{username} and password=#{password};
+    </select>
     <select id="getRolesByHrId" resultType="org.sang.bean.Role">
         SELECT r.* FROM hr_role h,role r where h.rid=r.id AND h.hrid=#{id}
     </select>
@@ -90,13 +93,41 @@
             (#{hrId},#{rid})
         </foreach>
     </insert>
+    <insert id="addRolesForHr2">
+        INSERT IGNORE INTO hr_role(hrid,rid) VALUES
+        <foreach collection="rids" separator="," item="rid">
+            (#{hrId},#{rid})
+        </foreach>
+    </insert>
     <delete id="deleteHr" parameterType="Long">
-        DELETE FROM hr WHERE id=#{hrId}
+        DELETE h.*,hr.* FROM hr h,hr_role hr WHERE h.id=hr.hrid and h.id=#{hrId}
     </delete>
+    <update id="deleteHrV" parameterType="Long">
+        update hr set enabled=0 where id=#{hrId}
+    </update>
     <select id="getAllHr" resultType="org.sang.bean.Hr">
         select * from hr
         <if test="currentId!=null">
             WHERE id !=#{currentId}
         </if>
     </select>
+    <select id="getOperatorList" resultType="org.sang.bean.Hr">
+        select h.* from hr h,signqueue sq where h.id=sq.userid and sq.rank = #{rank, jdbcType=VARCHAR}
+    </select>
+    <select id="getRyList" resultType="org.sang.bean.Hr">
+        select * from hr where enabled=1
+    </select>
+    <insert id="newOperator" parameterType="org.sang.bean.Hr">
+	    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+        insert into hr(name,phone,telephone,address,enabled,username,password,remark) 
+        values (#{name},#{phone},#{telephone},#{address},#{enabled},#{username},#{password},#{remark})
+    </insert>
+    <update id="updateUserFace">
+        update hr set userface=#{userface} where id=#{userid}
+    </update>
+    <update id="updatePassword">
+        update hr set password=#{password} where id=#{userid}
+    </update>
 </mapper>

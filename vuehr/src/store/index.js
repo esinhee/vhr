@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import '../lib/sockjs'
-import '../lib/stomp'
+//import '../lib/sockjs'
+//import '../lib/stomp'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,7 @@ export default new Vuex.Store({
     msgList: [],
     isDotMap: new Map(),
     currentFriend: {},
-    stomp: Stomp.over(new SockJS("/ws/endpointChat")),
+    //stomp: Stomp.over(new SockJS("/ws/endpointChat")),
     nfDot: false
   },
   mutations: {
@@ -48,7 +48,7 @@ export default new Vuex.Store({
       state.isDotMap.delete(key);
     }
   },
-  actions: {
+  /*actions: {
     connect(context){
       context.state.stomp = Stomp.over(new SockJS("/ws/endpointChat"));
       context.state.stomp.connect({}, frame=> {
@@ -82,5 +82,5 @@ export default new Vuex.Store({
 
       });
     }
-  }
+  }*/
 });

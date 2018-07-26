@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sang.mapper.AttachMapper" >
+  <resultMap id="BaseResultMap" type="org.sang.bean.Attach" >
+    <id column="atid" property="atid" jdbcType="INTEGER" />
+    <result column="atname" property="atname" jdbcType="VARCHAR" />
+    <result column="atuuid" property="atuuid" jdbcType="VARCHAR" />
+    <result column="atsize" property="atsize" jdbcType="VARCHAR" />
+    <result column="attype" property="attype" jdbcType="VARCHAR" />
+    <result column="atpath" property="atpath" jdbcType="VARCHAR" />
+    <result column="uploadid" property="uploadid" jdbcType="INTEGER" />
+    <result column="uploadby" property="uploadby" jdbcType="VARCHAR" />
+    <result column="uploaddate" property="uploaddate" jdbcType="TIMESTAMP" />
+    <result column="releatid" property="releatid" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    atid, atname, atuuid, atsize, attype, atpath, uploadid, uploadby, uploaddate, releatid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from attach
+    where atid = #{atid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from attach
+    where atid = #{atid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.Attach" >
+    <selectKey resultType="java.lang.Integer" keyProperty="atid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into attach (atname, atuuid, atsize, 
+      attype, atpath, uploadid, 
+      uploadby, uploaddate, releatid
+      )
+    values (#{atname,jdbcType=VARCHAR}, #{atuuid,jdbcType=VARCHAR}, #{atsize,jdbcType=VARCHAR}, 
+      #{attype,jdbcType=VARCHAR}, #{atpath,jdbcType=VARCHAR}, #{uploadid,jdbcType=INTEGER}, 
+      #{uploadby,jdbcType=VARCHAR}, #{uploaddate,jdbcType=TIMESTAMP}, #{releatid,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.Attach" >
+    <selectKey resultType="java.lang.Integer" keyProperty="atid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into attach
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="atname != null" >
+        atname,
+      </if>
+      <if test="atuuid != null" >
+        atuuid,
+      </if>
+      <if test="atsize != null" >
+        atsize,
+      </if>
+      <if test="attype != null" >
+        attype,
+      </if>
+      <if test="atpath != null" >
+        atpath,
+      </if>
+      <if test="uploadid != null" >
+        uploadid,
+      </if>
+      <if test="uploadby != null" >
+        uploadby,
+      </if>
+      <if test="uploaddate != null" >
+        uploaddate,
+      </if>
+      <if test="releatid != null" >
+        releatid,
+      </if>
+      <if test="cid != null" >
+        cid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="atname != null" >
+        #{atname,jdbcType=VARCHAR},
+      </if>
+      <if test="atuuid != null" >
+        #{atuuid,jdbcType=VARCHAR},
+      </if>
+      <if test="atsize != null" >
+        #{atsize,jdbcType=VARCHAR},
+      </if>
+      <if test="attype != null" >
+        #{attype,jdbcType=VARCHAR},
+      </if>
+      <if test="atpath != null" >
+        #{atpath,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadid != null" >
+        #{uploadid,jdbcType=INTEGER},
+      </if>
+      <if test="uploadby != null" >
+        #{uploadby,jdbcType=VARCHAR},
+      </if>
+      <if test="uploaddate != null" >
+        #{uploaddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="releatid != null" >
+        #{releatid,jdbcType=INTEGER},
+      </if>
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.Attach" >
+    update attach
+    <set >
+      <if test="atname != null" >
+        atname = #{atname,jdbcType=VARCHAR},
+      </if>
+      <if test="atuuid != null" >
+        atuuid = #{atuuid,jdbcType=VARCHAR},
+      </if>
+      <if test="atsize != null" >
+        atsize = #{atsize,jdbcType=VARCHAR},
+      </if>
+      <if test="attype != null" >
+        attype = #{attype,jdbcType=VARCHAR},
+      </if>
+      <if test="atpath != null" >
+        atpath = #{atpath,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadid != null" >
+        uploadid = #{uploadid,jdbcType=INTEGER},
+      </if>
+      <if test="uploadby != null" >
+        uploadby = #{uploadby,jdbcType=VARCHAR},
+      </if>
+      <if test="uploaddate != null" >
+        uploaddate = #{uploaddate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="releatid != null" >
+        releatid = #{releatid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where atid = #{atid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.Attach" >
+    update attach
+    set atname = #{atname,jdbcType=VARCHAR},
+      atuuid = #{atuuid,jdbcType=VARCHAR},
+      atsize = #{atsize,jdbcType=VARCHAR},
+      attype = #{attype,jdbcType=VARCHAR},
+      atpath = #{atpath,jdbcType=VARCHAR},
+      uploadid = #{uploadid,jdbcType=INTEGER},
+      uploadby = #{uploadby,jdbcType=VARCHAR},
+      uploaddate = #{uploaddate,jdbcType=TIMESTAMP},
+      releatid = #{releatid,jdbcType=INTEGER}
+    where atid = #{atid,jdbcType=INTEGER}
+  </update>
+  <update id="releatedAttach">
+    update attach set releatid = #{eid,jdbcType=INTEGER} where atid in
+    <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+      #{item,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

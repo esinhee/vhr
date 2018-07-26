@@ -4,24 +4,34 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import ElementUIVerify from 'element-ui-verify'
+import Egrid from 'egrid'
+import VueQuillEditor from 'vue-quill-editor'
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
 import {getRequest} from './utils/api'
 import {postRequest} from './utils/api'
 import {deleteRequest} from './utils/api'
 import {putRequest} from './utils/api'
+import {uploadFileRequest} from './utils/api'
 import {initMenu} from './utils/utils'
 import {isNotNullORBlank} from './utils/utils'
 import './utils/filter_utils'
 import 'font-awesome/css/font-awesome.min.css'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
+Vue.use(ElementUIVerify)
+Vue.use(Egrid)
+Vue.use(VueQuillEditor)
 
 Vue.prototype.getRequest = getRequest;
 Vue.prototype.postRequest = postRequest;
 Vue.prototype.deleteRequest = deleteRequest;
 Vue.prototype.putRequest = putRequest;
+Vue.prototype.uploadFileRequest = uploadFileRequest;
 Vue.prototype.isNotNullORBlank = isNotNullORBlank;
 
 router.beforeEach((to, from, next)=> {

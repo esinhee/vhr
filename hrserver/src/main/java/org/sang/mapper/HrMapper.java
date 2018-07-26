@@ -23,10 +23,24 @@ public interface HrMapper {
     int deleteRoleByHrId(Long hrId);
 
     int addRolesForHr(@Param("hrId") Long hrId, @Param("rids") Long[] rids);
+    
+    int addRolesForHr2(@Param("hrId") Long hrId, @Param("rids") Long[] rids);
 
     Hr getHrById(Long hrId);
 
     int deleteHr(Long hrId);
 
     List<Hr> getAllHr(@Param("currentId") Long currentId);
+    
+    int newOperator(Hr hr);
+    
+    List<Hr> getOperatorList(@Param("rank") String rank);
+
+    int updateUserFace(@Param("userid") Integer userid, @Param("userface") String userface);
+
+    Hr getHrByPassword(@Param("username") String username, @Param("password") String password);
+
+    int updatePassword(@Param("userid") Integer userid, @Param("password") String password);
+
+    List<Hr> getRyList();
 }

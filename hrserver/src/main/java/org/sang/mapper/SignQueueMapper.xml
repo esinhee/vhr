@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sang.mapper.SignQueueMapper" >
+  <resultMap id="BaseResultMap" type="org.sang.bean.SignQueue" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="rank" property="rank" jdbcType="VARCHAR" />
+    <result column="queue" property="queue" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, userid, `rank`, queue
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from signqueue
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="countSign" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select count(id) from signqueue where rank=#{rank}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from signqueue
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteWhenSingout">
+    delete from signqueue
+    where userid = #{id,jdbcType=INTEGER} and rank like concat(#{rank, jdbcType=VARCHAR},'%')
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.SignQueue" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into signqueue (userid, `rank`, queue
+      )
+    values (#{userid,jdbcType=INTEGER}, #{rank,jdbcType=VARCHAR}, #{queue,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.SignQueue" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into signqueue
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="rank != null" >
+        `rank`,
+      </if>
+      <if test="queue != null" >
+        queue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="rank != null" >
+        #{rank,jdbcType=VARCHAR},
+      </if>
+      <if test="queue != null" >
+        #{queue,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.SignQueue" >
+    update signqueue
+    <set >
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="rank != null" >
+        `rank` = #{rank,jdbcType=VARCHAR},
+      </if>
+      <if test="queue != null" >
+        queue = #{queue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.SignQueue" >
+    update signqueue
+    set userid = #{userid,jdbcType=INTEGER},
+      `rank` = #{rank,jdbcType=VARCHAR},
+      queue = #{queue,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

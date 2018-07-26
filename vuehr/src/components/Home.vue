@@ -2,11 +2,11 @@
   <div>
     <el-container class="home-container">
       <el-header class="home-header">
-        <span class="home_title">微人事</span>
+        <span class="home_title"><router-link to="/main">东山县医院ITAM</router-link></span>
         <div style="display: flex;align-items: center;margin-right: 7px">
-          <el-badge style="margin-right: 30px" :is-dot="this.$store.state.nfDot">
+          <!--<el-badge style="margin-right: 30px" :is-dot="this.$store.state.nfDot">
             <i class="fa fa-bell-o" @click="goChat" style="cursor: pointer"></i>
-          </el-badge>
+          </el-badge>-->
           <el-dropdown @command="handleCommand">
   <span class="el-dropdown-link home_userinfo" style="display: flex;align-items: center">
     {{user.name}}
@@ -14,7 +14,7 @@
             style="width: 40px;height: 40px;margin-right: 5px;margin-left: 5px;border-radius: 40px"/></i>
   </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人中心</el-dropdown-item>
+              <el-dropdown-item><router-link to="/main/ucenter">个人中心</router-link></el-dropdown-item>
               <el-dropdown-item>设置</el-dropdown-item>
               <el-dropdown-item command="logout" divided>注销</el-dropdown-item>
             </el-dropdown-menu>
@@ -45,7 +45,7 @@
         <el-container>
           <el-main>
             <el-breadcrumb separator-class="el-icon-arrow-right">
-              <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+              <el-breadcrumb-item :to="{ path: '/main' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>
             </el-breadcrumb>
             <keep-alive>
@@ -129,6 +129,10 @@
   }
 </script>
 <style>
+  a {
+    text-decoration: none;
+    display: inline;
+  }
   .home-container {
     height: 100%;
     position: absolute;
@@ -160,11 +164,12 @@
     padding: 0px;;
   }
 
-  .home_title {
+  .home_title a {
     color: #fff;
     font-size: 22px;
     display: inline;
     margin-left: 8px;
+    text-decoration: none;
   }
 
   .home_userinfo {

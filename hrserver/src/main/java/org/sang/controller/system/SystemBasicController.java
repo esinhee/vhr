@@ -41,8 +41,12 @@ public class SystemBasicController {
 
     @RequestMapping(value = "/addRole", method = RequestMethod.POST)
     public RespBean addNewRole(String role, String roleZh) {
-        if (roleService.addNewRole(role, roleZh) == 1) {
+    	int ret = roleService.addNewRole(role, roleZh);
+        if ( ret == 1) {
             return new RespBean("success", "添加成功!");
+        }
+        if (ret == 2) {
+        	return new RespBean("error", "角色或角色名已经存在!");
         }
         return new RespBean("error", "添加失败!");
     }

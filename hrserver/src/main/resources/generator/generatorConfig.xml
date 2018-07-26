@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration> <!-- 引入配置文件 -->
+	<properties resource="mybatis.properties" />
+	 <!--classPathEntry:数据库的JDBC驱动,换成你自己的驱动位置 可选 -->
+	 <classPathEntry location="D:\develop\mybatis-generator\mysql-connector-java-5.1.25-bin.jar" />
+	 <!-- 一个数据库一个context -->
+	 <!--defaultModelType="flat" 大数据字段，不分表 -->
+	<context id="MysqlTables" targetRuntime="MyBatis3"
+		defaultModelType="flat">
+		<property name="autoDelimitKeywords" value="true" />
+		<property name="beginningDelimiter" value="`" />
+		<property name="endingDelimiter" value="`" />
+		<property name="javaFileEncoding" value="utf-8" />
+		<!-- 生成的pojo，将implements Serializable -->
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+		
+		<!-- 注释 -->
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" /><!-- 是否取消注释 -->
+			<property name="suppressDate" value="true" /> <!-- 是否生成注释代时间戳 -->
+		</commentGenerator>
+		
+		<!-- jdbc连接 -->
+		<jdbcConnection driverClass="${jdbc_driver}"
+			connectionURL="${jdbc_url}" userId="${jdbc_user}" password="${jdbc_password}" />
+		<!-- 类型转换 -->
+		<javaTypeResolver>
+			<!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.）
+			true：使用BigDecimal对应DECIMAL和 NUMERIC数据类型 
+			false：默认, 
+				scale>0;
+				length>18：使用BigDecimal; 
+				scale=0;length[10,18]：使用Long； 
+				scale=0;length[5,9]：使用Integer； 
+				scale=0;length<5：使用Short；
+			 -->
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		
+		<!-- 生成实体类(bean)地址 -->
+		<!-- java模型创建器，是必须要的元素 
+			负责：1，key类（见context的defaultModelType）；2，java类；3，查询类 
+			targetPackage：生成的类要放的包，真实的包受
+			enableSubPackages属性控制； 
+			targetProject：目标项目，指定一个存在的目录下，生成的内容会放到指定目录中，如果目录不存在，MBG不会自动建目录 -->
+		<javaModelGenerator targetPackage="org.sang.bean" targetProject="./src/main/java">
+			<property name="enableSubPackages" value="false" />
+			<!-- 从数据库返回的值被清理前后的空格 -->
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		
+		<!-- 生成mapxml文件 -->
+		<sqlMapGenerator targetPackage="org.sang.mapper"
+			targetProject="./src/main/java">
+			<property name="enableSubPackages" value="false" />
+		</sqlMapGenerator>
+		
+		<!-- 生成mapxml对应client，也就是接口dao -->
+		<javaClientGenerator targetPackage="org.sang.mapper"
+			targetProject="./src/main/java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<!-- <table tableName="signin" domainObjectName="Sign" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>-->
+		<table tableName="eventtype" domainObjectName="EventType" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<!-- <table tableName="duty" domainObjectName="Duty" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+        <table tableName="keshi" domainObjectName="Keshi" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+            enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="kid" sqlStatement="Mysql" identity="true" />
+        </table>
+        <table tableName="event" domainObjectName="Event" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+            enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="eid" sqlStatement="Mysql" identity="true" />
+        </table>
+        <table tableName="staff" domainObjectName="Staff" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+            enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="sid" sqlStatement="Mysql" identity="true" />
+        </table>
+        <table tableName="attach" domainObjectName="Attach" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+            enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="atid" sqlStatement="Mysql" identity="true" />
+        </table>
+        <table tableName="eventtask" domainObjectName="EventTask" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+            enableSelectByExample="false" selectByExampleQueryId="false">
+            <property name="useActualColumnNames" value="false" />
+            <generatedKey column="id" sqlStatement="Mysql" identity="true" />
+        </table>
+		<table tableName="eventprocess" domainObjectName="EventProcess" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="signqueue" domainObjectName="SignQueue" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="id" sqlStatement="Mysql" identity="true" />
+		</table>
+		<table tableName="ticketstatus" domainObjectName="TicketStatus" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+			   enableSelectByExample="false" selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="false" />
+			<generatedKey column="zid" sqlStatement="Mysql" identity="true" />
+		</table> -->
+	</context>
+</generatorConfiguration>

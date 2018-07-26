@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sang.mapper.EventMapper" >
+  <resultMap id="BaseResultMap" type="org.sang.bean.Event" >
+    <id column="eid" property="eid" jdbcType="INTEGER" />
+    <result column="etid" property="etid" jdbcType="INTEGER" />
+    <result column="etname" property="etname" jdbcType="VARCHAR" />
+    <result column="grade" property="grade" jdbcType="INTEGER" />
+    <result column="kid" property="kid" jdbcType="VARCHAR" />
+    <result column="kname" property="kname" jdbcType="VARCHAR" />
+    <result column="reportid" property="reportid" jdbcType="VARCHAR" />
+    <result column="reporter" property="reporter" jdbcType="VARCHAR" />
+    <result column="reporttime" property="reporttime" jdbcType="TIMESTAMP" />
+    <result column="recorderid" property="recorderid" jdbcType="INTEGER" />
+    <result column="recorder" property="recorder" jdbcType="VARCHAR" />
+    <result column="recordetime" property="recordetime" jdbcType="TIMESTAMP" />
+    <result column="dealerid" property="dealerid" jdbcType="INTEGER" />
+    <result column="dealer" property="dealer" jdbcType="VARCHAR" />
+    <result column="dealtime" property="dealtime" jdbcType="TIMESTAMP" />
+    <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    <result column="dealflg" property="dealflg" jdbcType="INTEGER" />
+    <result column="relatedid" property="relatedid" jdbcType="INTEGER" />
+    <result column="bz" property="bz" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="org.sang.bean.Event" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithStatus" type="org.sang.bean.Event" extends="ResultMapWithBLOBs" >
+    <result column="zname" property="zname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    eid, etid, etname, grade, kid, kname, reportid, reporter, reporttime, recorderid, 
+    recorder, recordetime, dealerid, dealer, dealtime, updatetime, dealflg, relatedid, 
+    bz
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from event
+    where eid = #{eid,jdbcType=INTEGER}
+  </select>
+  <select id="getTodayTicketList" resultMap="ResultMapWithStatus" parameterType="java.util.Date">
+    select e.*,ts.zname from event e,ticketstatus ts where e.dealflg=ts.zid and str_to_date(e.reporttime, '%Y-%m-%d')=#{dt, jdbcType=DATE} group by eid desc
+  </select>
+  <select id="getTicketListByPage" resultMap="ResultMapWithStatus">
+    select
+	e.*,
+	ts.zname
+    from
+	event e,
+	ticketstatus ts
+    where
+	e.dealflg = ts.zid
+	and e.reporttime between #{startDate} and #{endDate}
+	order by e.eid desc
+	limit #{startid,jdbcType=INTEGER},#{size,jdbcType=INTEGER}
+  </select>
+  <select id="getTicketCount" resultType="Integer">
+    select
+	count(e.eid)
+    from
+	event e
+    where
+	e.reporttime between #{startDate} and #{endDate}
+  </select>
+  <select id="selectTicketByKeywords" resultMap="ResultMapWithStatus">
+    select
+	e.*,
+	ts.zname
+    from
+	event e,
+	ticketstatus ts
+    where
+	e.dealflg = ts.zid
+    <if test="startDate!=null and endDate!=null">
+	  and e.reporttime between #{startDate} and #{endDate}
+    </if>
+    <if test="grade!=null and grade!=''">
+      and e.grade=#{grade}
+    </if>
+    <if test="tktype!=null and tktype!=''">
+      and e.etid=#{tktype}
+    </if>
+    <if test="tkstatus!=null and tkstatus!=''">
+      and e.dealflg=#{tkstatus}
+    </if>
+    <if test="dealer!=null and dealer!=''">
+      and e.dealerid=#{dealer}
+    </if>
+	order by e.eid
+    <if test="startid!=null and size!=null">
+	  limit #{startid,jdbcType=INTEGER},#{size,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectTicketCountByKeywords" resultType="Integer">
+    select
+    count(e.eid)
+    from
+    event e,
+    ticketstatus ts
+    where
+    e.dealflg = ts.zid
+    <if test="startDate!=null and endDate!=null">
+      and e.reporttime between #{startDate} and #{endDate}
+    </if>
+    <if test="grade!=null and grade!=''">
+      and e.grade=#{grade}
+    </if>
+    <if test="tktype!=null and tktype!=''">
+      and e.etid=#{tktype}
+    </if>
+    <if test="tkstatus!=null and tkstatus!=''">
+      and e.dealflg=#{tkstatus}
+    </if>
+    <if test="dealer!=null and dealer!=''">
+      and e.dealerid=#{dealer}
+    </if>
+  </select>
+  <select id="fetchUndoEventList" resultMap="ResultMapWithStatus">
+    select e.*,ts.zname from event e,ticketstatus ts where e.dealflg=ts.zid and e.dealflg <![CDATA[ < ]]> #{es, jdbcType=INTEGER} and e.dealerid=#{userid}
+  </select>
+  <select id="refuseTicket" statementType="CALLABLE" parameterType="java.util.Map">
+    call refuseTicket(#{id,mode=IN,jdbcType=INTEGER}, #{userId,mode=IN,jdbcType=INTEGER},#{result,mode=OUT,jdbcType=INTEGER})
+  </select>
+  <select id="countTicket" resultType="Map">
+    SELECT t.name,sum(case t.xm when 'jr' then t.sl else 0 end) jr,sum(case t.xm when 'wc' then t.sl else 0 end) wc,sum(case t.xm when 'ww' then t.sl else 0 end) ww
+    FROM (
+    SELECT 'aaa' as name,'jr' xm,count(eid) sl from `event` where str_to_date(recordetime, '%Y-%m-%d')=#{dt, jdbcType=DATE} and dealerid=#{userid, jdbcType=INTEGER} and dealflg <![CDATA[ < ]]> 8
+    union all
+    SELECT 'aaa' as name,'wc' xm, count(eid) sl from `event` where dealflg=7 and dealerid=#{userid, jdbcType=INTEGER} and str_to_date(recordetime, '%Y-%m-%d')=#{dt, jdbcType=DATE}
+    union all
+    select 'aaa' as name,'ww' xm, count(eid) sl from `event` where dealflg <![CDATA[ < ]]> 7 and dealerid=#{userid, jdbcType=INTEGER}
+    ) t
+    GROUP BY t.name
+  </select>
+  <select id="getTicketInfo" resultMap="ResultMapWithStatus">
+    select e.*,ts.zname from event e,ticketstatus ts where e.dealflg=ts.zid and e.eid=#{id}
+  </select>
+  <update id="updateDealFlg">
+    update event set dealflg = #{flg} where eid=#{eid}
+  </update>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from event
+    where eid = #{eid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.Event" >
+    <selectKey resultType="java.lang.Integer" keyProperty="eid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into event (etid, etname, grade, 
+      kid, kname, reportid, 
+      reporter, reporttime, recorderid, 
+      recorder, recordetime, dealerid, 
+      dealer, dealtime, updatetime, 
+      dealflg, relatedid, bz, 
+      content)
+    values (#{etid,jdbcType=INTEGER}, #{etname,jdbcType=VARCHAR}, #{grade,jdbcType=INTEGER}, 
+      #{kid,jdbcType=VARCHAR}, #{kname,jdbcType=VARCHAR}, #{reportid,jdbcType=VARCHAR}, 
+      #{reporter,jdbcType=VARCHAR}, #{reporttime,jdbcType=TIMESTAMP}, #{recorderid,jdbcType=INTEGER}, 
+      #{recorder,jdbcType=VARCHAR}, #{recordetime,jdbcType=TIMESTAMP}, #{dealerid,jdbcType=INTEGER}, 
+      #{dealer,jdbcType=VARCHAR}, #{dealtime,jdbcType=TIMESTAMP}, #{updatetime,jdbcType=TIMESTAMP}, 
+      #{dealflg,jdbcType=INTEGER}, #{relatedid,jdbcType=INTEGER}, #{bz,jdbcType=INTEGER}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.Event" >
+    <selectKey resultType="java.lang.Integer" keyProperty="eid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into event
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="etid != null" >
+        etid,
+      </if>
+      <if test="etname != null" >
+        etname,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="kid != null" >
+        kid,
+      </if>
+      <if test="kname != null" >
+        kname,
+      </if>
+      <if test="reportid != null" >
+        reportid,
+      </if>
+      <if test="reporter != null" >
+        reporter,
+      </if>
+      <if test="reporttime != null" >
+        reporttime,
+      </if>
+      <if test="recorderid != null" >
+        recorderid,
+      </if>
+      <if test="recorder != null" >
+        recorder,
+      </if>
+      <if test="recordetime != null" >
+        recordetime,
+      </if>
+      <if test="dealerid != null" >
+        dealerid,
+      </if>
+      <if test="dealer != null" >
+        dealer,
+      </if>
+      <if test="dealtime != null" >
+        dealtime,
+      </if>
+      <if test="updatetime != null" >
+        updatetime,
+      </if>
+      <if test="dealflg != null" >
+        dealflg,
+      </if>
+      <if test="relatedid != null" >
+        relatedid,
+      </if>
+      <if test="bz != null" >
+        bz,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="etid != null" >
+        #{etid,jdbcType=INTEGER},
+      </if>
+      <if test="etname != null" >
+        #{etname,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="kid != null" >
+        #{kid,jdbcType=VARCHAR},
+      </if>
+      <if test="kname != null" >
+        #{kname,jdbcType=VARCHAR},
+      </if>
+      <if test="reportid != null" >
+        #{reportid,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        #{reporter,jdbcType=VARCHAR},
+      </if>
+      <if test="reporttime != null" >
+        #{reporttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recorderid != null" >
+        #{recorderid,jdbcType=INTEGER},
+      </if>
+      <if test="recorder != null" >
+        #{recorder,jdbcType=VARCHAR},
+      </if>
+      <if test="recordetime != null" >
+        #{recordetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealerid != null" >
+        #{dealerid,jdbcType=INTEGER},
+      </if>
+      <if test="dealer != null" >
+        #{dealer,jdbcType=VARCHAR},
+      </if>
+      <if test="dealtime != null" >
+        #{dealtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealflg != null" >
+        #{dealflg,jdbcType=INTEGER},
+      </if>
+      <if test="relatedid != null" >
+        #{relatedid,jdbcType=INTEGER},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.Event" >
+    update event
+    <set >
+      <if test="etid != null" >
+        etid = #{etid,jdbcType=INTEGER},
+      </if>
+      <if test="etname != null" >
+        etname = #{etname,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="kid != null" >
+        kid = #{kid,jdbcType=VARCHAR},
+      </if>
+      <if test="kname != null" >
+        kname = #{kname,jdbcType=VARCHAR},
+      </if>
+      <if test="reportid != null" >
+        reportid = #{reportid,jdbcType=VARCHAR},
+      </if>
+      <if test="reporter != null" >
+        reporter = #{reporter,jdbcType=VARCHAR},
+      </if>
+      <if test="reporttime != null" >
+        reporttime = #{reporttime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recorderid != null" >
+        recorderid = #{recorderid,jdbcType=INTEGER},
+      </if>
+      <if test="recorder != null" >
+        recorder = #{recorder,jdbcType=VARCHAR},
+      </if>
+      <if test="recordetime != null" >
+        recordetime = #{recordetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealerid != null" >
+        dealerid = #{dealerid,jdbcType=INTEGER},
+      </if>
+      <if test="dealer != null" >
+        dealer = #{dealer,jdbcType=VARCHAR},
+      </if>
+      <if test="dealtime != null" >
+        dealtime = #{dealtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null" >
+        updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealflg != null" >
+        dealflg = #{dealflg,jdbcType=INTEGER},
+      </if>
+      <if test="relatedid != null" >
+        relatedid = #{relatedid,jdbcType=INTEGER},
+      </if>
+      <if test="bz != null" >
+        bz = #{bz,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.sang.bean.Event" >
+    update event
+    set etid = #{etid,jdbcType=INTEGER},
+      etname = #{etname,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      kid = #{kid,jdbcType=VARCHAR},
+      kname = #{kname,jdbcType=VARCHAR},
+      reportid = #{reportid,jdbcType=VARCHAR},
+      reporter = #{reporter,jdbcType=VARCHAR},
+      reporttime = #{reporttime,jdbcType=TIMESTAMP},
+      recorderid = #{recorderid,jdbcType=INTEGER},
+      recorder = #{recorder,jdbcType=VARCHAR},
+      recordetime = #{recordetime,jdbcType=TIMESTAMP},
+      dealerid = #{dealerid,jdbcType=INTEGER},
+      dealer = #{dealer,jdbcType=VARCHAR},
+      dealtime = #{dealtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      dealflg = #{dealflg,jdbcType=INTEGER},
+      relatedid = #{relatedid,jdbcType=INTEGER},
+      bz = #{bz,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.Event" >
+    update event
+    set etid = #{etid,jdbcType=INTEGER},
+      etname = #{etname,jdbcType=VARCHAR},
+      grade = #{grade,jdbcType=INTEGER},
+      kid = #{kid,jdbcType=VARCHAR},
+      kname = #{kname,jdbcType=VARCHAR},
+      reportid = #{reportid,jdbcType=VARCHAR},
+      reporter = #{reporter,jdbcType=VARCHAR},
+      reporttime = #{reporttime,jdbcType=TIMESTAMP},
+      recorderid = #{recorderid,jdbcType=INTEGER},
+      recorder = #{recorder,jdbcType=VARCHAR},
+      recordetime = #{recordetime,jdbcType=TIMESTAMP},
+      dealerid = #{dealerid,jdbcType=INTEGER},
+      dealer = #{dealer,jdbcType=VARCHAR},
+      dealtime = #{dealtime,jdbcType=TIMESTAMP},
+      updatetime = #{updatetime,jdbcType=TIMESTAMP},
+      dealflg = #{dealflg,jdbcType=INTEGER},
+      relatedid = #{relatedid,jdbcType=INTEGER},
+      bz = #{bz,jdbcType=INTEGER}
+    where eid = #{eid,jdbcType=INTEGER}
+  </update>
+</mapper>

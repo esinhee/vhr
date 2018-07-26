@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sang.mapper.TicketStatusMapper" >
+  <resultMap id="BaseResultMap" type="org.sang.bean.TicketStatus" >
+    <id column="zid" property="zid" jdbcType="INTEGER" />
+    <result column="zname" property="zname" jdbcType="VARCHAR" />
+    <result column="bz" property="bz" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    zid, zname, bz
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ticketstatus
+    where zid = #{zid,jdbcType=INTEGER}
+  </select>
+  <select id="selectStatusList" resultMap="BaseResultMap">
+    select * from ticketstatus where bz=1
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ticketstatus
+    where zid = #{zid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.TicketStatus" >
+    <selectKey resultType="java.lang.Integer" keyProperty="zid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ticketstatus (zname, bz)
+    values (#{zname,jdbcType=VARCHAR}, #{bz,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.TicketStatus" >
+    <selectKey resultType="java.lang.Integer" keyProperty="zid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into ticketstatus
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="zname != null" >
+        zname,
+      </if>
+      <if test="bz != null" >
+        bz,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="zname != null" >
+        #{zname,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        #{bz,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.TicketStatus" >
+    update ticketstatus
+    <set >
+      <if test="zname != null" >
+        zname = #{zname,jdbcType=VARCHAR},
+      </if>
+      <if test="bz != null" >
+        bz = #{bz,jdbcType=BIT},
+      </if>
+    </set>
+    where zid = #{zid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.TicketStatus" >
+    update ticketstatus
+    set zname = #{zname,jdbcType=VARCHAR},
+      bz = #{bz,jdbcType=BIT}
+    where zid = #{zid,jdbcType=INTEGER}
+  </update>
+</mapper>

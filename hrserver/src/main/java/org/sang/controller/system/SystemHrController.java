@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sang on 2018/1/2.
@@ -43,7 +45,7 @@ public class SystemHrController {
 
     @RequestMapping(value = "/roles", method = RequestMethod.PUT)
     public RespBean updateHrRoles(Long hrId, Long[] rids) {
-        if (hrService.updateHrRoles(hrId, rids) == rids.length) {
+        if (hrService.updateHrRoles(hrId, rids) > 0 /*== rids.length*/) {
             return new RespBean("success", "更新成功!");
         }
         return new RespBean("error", "更新失败!");
@@ -66,5 +68,21 @@ public class SystemHrController {
         }
         return new RespBean("error", "注册失败!");
     }
-
+    
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public Map<String, Object> addOperator(Hr hr) {
+    	int ret = 0;
+    	Map<String, Object> map = new HashMap<>();
+    	if (hr.getId() == 0) {
+    		ret = hrService.newOperator(hr);
+    	}
+    	if (ret > 0) {
+    		map.put("status", "success");
+            map.put("msg", ret);
+            return map;
+    	}
+    	map.put("status", "error");
+        map.put("msg", "添加失败！");
+        return map;
+    }
 }

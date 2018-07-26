@@ -25,6 +25,9 @@ public class RoleService {
         if (!role.startsWith("ROLE_")) {
             role = "ROLE_" + role;
         }
+        if (roleMapper.checkRole(role, roleZh) > 0) {
+        	return 2;
+        }
         return roleMapper.addNewRole(role, roleZh);
     }
 

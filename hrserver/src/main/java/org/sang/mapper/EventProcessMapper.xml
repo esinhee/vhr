@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.EventProcessMapper">
+  <resultMap id="BaseResultMap" type="org.sang.bean.EventProcess">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="eid" jdbcType="INTEGER" property="eid" />
+    <result column="taskid" jdbcType="INTEGER" property="taskid" />
+    <result column="opid" jdbcType="INTEGER" property="opid" />
+    <result column="opname" jdbcType="VARCHAR" property="opname" />
+    <result column="curdatetime" jdbcType="TIMESTAMP" property="curdatetime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="org.sang.bean.EventProcess">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, eid, taskid, opid, opname, curdatetime
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from eventprocess
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectProcessList" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select * from eventprocess where eid=#{eid}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from eventprocess
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.EventProcess">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into eventprocess (eid, taskid, opid, 
+      opname, curdatetime, content
+      )
+    values (#{eid,jdbcType=INTEGER}, #{taskid,jdbcType=INTEGER}, #{opid,jdbcType=INTEGER}, 
+      #{opname,jdbcType=VARCHAR}, #{curdatetime,jdbcType=TIMESTAMP}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.EventProcess">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into eventprocess
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eid != null">
+        eid,
+      </if>
+      <if test="taskid != null">
+        taskid,
+      </if>
+      <if test="opid != null">
+        opid,
+      </if>
+      <if test="opname != null">
+        opname,
+      </if>
+      <if test="curdatetime != null">
+        curdatetime,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eid != null">
+        #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="taskid != null">
+        #{taskid,jdbcType=INTEGER},
+      </if>
+      <if test="opid != null">
+        #{opid,jdbcType=INTEGER},
+      </if>
+      <if test="opname != null">
+        #{opname,jdbcType=VARCHAR},
+      </if>
+      <if test="curdatetime != null">
+        #{curdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.EventProcess">
+    update eventprocess
+    <set>
+      <if test="eid != null">
+        eid = #{eid,jdbcType=INTEGER},
+      </if>
+      <if test="taskid != null">
+        taskid = #{taskid,jdbcType=INTEGER},
+      </if>
+      <if test="opid != null">
+        opid = #{opid,jdbcType=INTEGER},
+      </if>
+      <if test="opname != null">
+        opname = #{opname,jdbcType=VARCHAR},
+      </if>
+      <if test="curdatetime != null">
+        curdatetime = #{curdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="org.sang.bean.EventProcess">
+    update eventprocess
+    set eid = #{eid,jdbcType=INTEGER},
+      taskid = #{taskid,jdbcType=INTEGER},
+      opid = #{opid,jdbcType=INTEGER},
+      opname = #{opname,jdbcType=VARCHAR},
+      curdatetime = #{curdatetime,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.EventProcess">
+    update eventprocess
+    set eid = #{eid,jdbcType=INTEGER},
+      taskid = #{taskid,jdbcType=INTEGER},
+      opid = #{opid,jdbcType=INTEGER},
+      opname = #{opname,jdbcType=VARCHAR},
+      curdatetime = #{curdatetime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

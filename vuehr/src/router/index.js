@@ -3,6 +3,9 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Chat from '@/components/chat/Chat'
+import Main from '@/components/main/Index'
+import Ucenter from '@/components/main/Ucenter'
+import TkView from '@/components/ticket/TkView'
 // import EmpAdv from '@/components/emp/EmpAdv'
 // import EmpBasic from '@/components/emp/EmpBasic'
 // import PerEc from '@/components/personnel/PerEc'
@@ -53,7 +56,36 @@ export default new Router({
             keepAlive: false,
             requireAuth: true
           }
-        }
+        },
+        {
+          path: '/main',
+          component: Main,
+          hidden: true,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/main/ucenter',
+          name: '个人中心',
+          component: Ucenter,
+          hidden: true,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/ticket/view',
+          name: '工单信息',
+          component: TkView,
+          hidden: true,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
       ]
     }
   ]

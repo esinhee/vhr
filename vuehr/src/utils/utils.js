@@ -20,7 +20,7 @@ export const initMenu = (router, store)=> {
       var fmtRoutes = formatRoutes(resp.data);
       router.addRoutes(fmtRoutes);
       store.commit('initMenu', fmtRoutes);
-      store.dispatch('connect');
+      //store.dispatch('connect');
     }
   })
 }
@@ -53,6 +53,10 @@ export const formatRoutes = (routes)=> {
           require(['../components/statistics/' + component + '.vue'], resolve)
         } else if (component.startsWith("Sys")) {
           require(['../components/system/' + component + '.vue'], resolve)
+        } else if (component.startsWith("Dly")) {
+          require(['../components/daily/' + component + '.vue'], resolve)
+        } else if (component.startsWith("Tk")) {
+          require(['../components/ticket/' + component + '.vue'], resolve)
         }
       },
       name: name,

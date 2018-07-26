@@ -6,6 +6,9 @@
     <select id="roles" resultType="org.sang.bean.Role">
         SELECT * FROM role where id!=6;
     </select>
+    <select id="checkRole" resultType="Integer">
+        SELECT count(id) FROM role where name=#{role} or nameZh=#{roleZh}
+    </select>
     <insert id="addNewRole">
         INSERT INTO role set name=#{role},nameZh=#{roleZh}
     </insert>

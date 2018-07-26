@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.DutyMapper">
+  <resultMap id="BaseResultMap" type="org.sang.bean.Duty">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="duty" jdbcType="VARCHAR" property="duty" />
+    <result column="begintime" jdbcType="TIME" property="begintime" />
+    <result column="endtime" jdbcType="TIME" property="endtime" />
+    <result column="bz" jdbcType="INTEGER" property="bz" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, duty, begintime, endtime, `bz`
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from duty
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from duty
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.Duty">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into duty (duty, begintime, endtime, 
+      `bz`)
+    values (#{duty,jdbcType=VARCHAR}, #{begintime,jdbcType=TIME}, #{endtime,jdbcType=TIME}, 
+      #{bz,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.Duty">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into duty
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="duty != null">
+        duty,
+      </if>
+      <if test="begintime != null">
+        begintime,
+      </if>
+      <if test="endtime != null">
+        endtime,
+      </if>
+      <if test="bz != null">
+        `bz`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="duty != null">
+        #{duty,jdbcType=VARCHAR},
+      </if>
+      <if test="begintime != null">
+        #{begintime,jdbcType=TIME},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=TIME},
+      </if>
+      <if test="bz != null">
+        #{bz,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.Duty">
+    update duty
+    <set>
+      <if test="duty != null">
+        duty = #{duty,jdbcType=VARCHAR},
+      </if>
+      <if test="begintime != null">
+        begintime = #{begintime,jdbcType=TIME},
+      </if>
+      <if test="endtime != null">
+        endtime = #{endtime,jdbcType=TIME},
+      </if>
+      <if test="bz != null">
+        `bz` = #{bz,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.Duty">
+    update duty
+    set duty = #{duty,jdbcType=VARCHAR},
+      begintime = #{begintime,jdbcType=TIME},
+      endtime = #{endtime,jdbcType=TIME},
+      `bz` = #{bz,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.sang.mapper.KeshiMapper" >
+  <resultMap id="BaseResultMap" type="org.sang.bean.Keshi" >
+    <id column="kid" property="kid" jdbcType="VARCHAR" />
+    <result column="kname" property="kname" jdbcType="VARCHAR" />
+    <result column="parentid" property="parentid" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="seq" property="seq" jdbcType="INTEGER" />
+    <result column="pinyin" property="pinyin" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="INTEGER" />
+    <collection property="children" ofType="org.sang.bean.Keshi" select="org.sang.mapper.KeshiMapper.getKeshiByParentId" column="kid">
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    kid, kname, parentid, `level`, seq, pinyin, enabled
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    *
+    from keshi
+    where kid = #{kid,jdbcType=VARCHAR}
+  </select>
+  <select id="getKeshiList" resultMap="BaseResultMap">
+    select * from keshi where enabled=1 order by level;
+  </select>
+  <select id="getKeshiByParentId" resultMap="BaseResultMap">
+    select * from keshi where parentid=#{pid} and enabled=1;
+  </select>
+  <select id="addKeshi" statementType="CALLABLE">
+    call addKeshi(#{ks.kid,mode=IN,jdbcType=VARCHAR},#{ks.kname,mode=IN,jdbcType=VARCHAR},#{ks.parentid,mode=IN,jdbcType=VARCHAR},#{ks.enabled,mode=IN,jdbcType=INTEGER},#{ks.seq,mode=IN,jdbcType=INTEGER},#{ks.pinyin,mode=IN,jdbcType=VARCHAR},#{ks.result,mode=OUT,jdbcType=INTEGER})
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from keshi
+    where kid = #{kid,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="org.sang.bean.Keshi" >
+    <selectKey resultType="java.lang.String" keyProperty="kid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into keshi (kname, parentid, `level`, 
+      seq, pinyin, enabled
+      )
+    values (#{kname,jdbcType=VARCHAR}, #{parentid,jdbcType=VARCHAR}, #{level,jdbcType=VARCHAR}, 
+      #{seq,jdbcType=INTEGER}, #{pinyin,jdbcType=VARCHAR}, #{enabled,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="org.sang.bean.Keshi" >
+    <selectKey resultType="java.lang.String" keyProperty="kid" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into keshi
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="kname != null" >
+        kname,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="level != null" >
+        `level`,
+      </if>
+      <if test="seq != null" >
+        seq,
+      </if>
+      <if test="pinyin != null" >
+        pinyin,
+      </if>
+      <if test="enabled != null" >
+        enabled,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="kname != null" >
+        #{kname,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        #{seq,jdbcType=INTEGER},
+      </if>
+      <if test="pinyin != null" >
+        #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        #{enabled,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.sang.bean.Keshi" >
+    update keshi
+    <set >
+      <if test="kname != null" >
+        kname = #{kname,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null" >
+        `level` = #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="seq != null" >
+        seq = #{seq,jdbcType=INTEGER},
+      </if>
+      <if test="pinyin != null" >
+        pinyin = #{pinyin,jdbcType=VARCHAR},
+      </if>
+      <if test="enabled != null" >
+        enabled = #{enabled,jdbcType=INTEGER},
+      </if>
+    </set>
+    where kid = #{kid,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.sang.bean.Keshi" >
+    update keshi
+    set kname = #{kname,jdbcType=VARCHAR},
+      parentid = #{parentid,jdbcType=VARCHAR},
+      `level` = #{level,jdbcType=VARCHAR},
+      seq = #{seq,jdbcType=INTEGER},
+      pinyin = #{pinyin,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=INTEGER}
+    where kid = #{kid,jdbcType=VARCHAR}
+  </update>
+</mapper>
